@@ -1,6 +1,11 @@
 package _11AlwaysOverrideHashCodeWhenYouOverideEquals;
 
-public class PhoneNumber {
+import java.util.*;
+import java.util.Comparator;
+
+import static java.util.Comparator.comparingInt;
+
+public class PhoneNumber implements Cloneable, Comparable<PhoneNumber>{
     private final short areaCode,prefix,lineNum;
     public PhoneNumber(int areaCode,int prefix,int lineNum){
      this.areaCode = rangeCheck(areaCode,999,"area code");
@@ -50,5 +55,30 @@ public class PhoneNumber {
     public String toString() {
         return String.format("%03d-%03d-%04d",
                 areaCode,prefix,lineNum);
+    }
+    @Override
+    public PhoneNumber clone(){
+        try {
+            return  (PhoneNumber) super.clone();
+        }catch (CloneNotSupportedException e){
+            throw new AssertionError();
+        }
+    }
+    private static final Comparable<PhoneNumber> COMPARABLE =
+            (Comparable<PhoneNumber>) comparingInt((PhoneNumber pn)->pn.areaCode)
+                .thenComparingInt(pn->pn.prefix)
+                .thenComparingInt(pn->pn.lineNum);
+
+
+    @Override
+    public int compareTo(PhoneNumber pn) {
+        return COMPARABLE.compareTo(pn);
+//        int result = Short.compare(areaCode, pn.areaCode);
+//        if (result == 0) {
+//            result = Short.compare(prefix, pn.prefix);
+//            if (result == 0)
+//                result = Short.compare(lineNum, pn.lineNum);
+//        }
+//        return result;
     }
 }
